@@ -1,4 +1,8 @@
 flask
-flask-graphQL
 flask-sqlalchemy
+flask-login
+flask-admin
+flask-dance
+flask-graphql
 graphene-sqlalchemy
+sqlalchemy-utils
