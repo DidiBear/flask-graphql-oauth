@@ -1,6 +1,7 @@
-import sys
-from flask import Flask, redirect, url_for, flash, render_template
-from flask_sqlalchemy import SQLAlchemy
+import os 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+from flask import redirect, url_for, flash, render_template
 from sqlalchemy.orm.exc import NoResultFound
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_dance.consumer.backend.sqla import OAuthConsumerMixin, SQLAlchemyBackend
@@ -9,7 +10,7 @@ from flask_login import (
     LoginManager, UserMixin, current_user,
     login_required, login_user, logout_user
 )
-from model import db
+from app import app, db, login_manager
 
 auth_blueprint = make_github_blueprint(
     client_id="f75638c39c89011654bc",
@@ -27,8 +28,21 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user = db.relationship(User)
 
 # setup login manager
-login_manager = LoginManager()
 login_manager.login_view = 'github.login'
+
+@app.route("/")
+def index():
+    return render_template("home.html")
+
+app.register_blueprint(auth_blueprint, url_prefix="/login")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have logged out")
+    return redirect(url_for("index"))
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -54,54 +68,34 @@ def github_logged_in(blueprint, token):
     github_user_id = str(github_info["id"])
 
     # Find this OAuth token in the database, or create it
-    query = OAuth.query.filter_by(
-        provider=blueprint.name,
-        provider_user_id=github_user_id,
-    )
     try:
-        oauth = query.one()
+        oauth = OAuth.query \
+            .filter(OAuth.provider == blueprint.name) \
+            .filter(OAuth.provider_user_id == github_user_id) \
+            .one()
+
     except NoResultFound:
-        oauth = OAuth(
-            provider=blueprint.name,
-            provider_user_id=github_user_id,
-            token=token,
-        )
+        oauth = OAuth(provider=blueprint.name, provider_user_id=github_user_id, token=token)
 
-    if oauth.user:
-        login_user(oauth.user)
-        flash("Successfully signed in with GitHub.")
 
-    else:
+    if not oauth.user:
         # Create a new local user account for this user
-        user = User(
-            # Remember that `email` can be None, if the user declines
-            # to publish their email address on GitHub!
-            # email=github_info["email"],
-            username=github_info["name"],
-        )
+        user = User(username=github_info["name"])
         # Associate the new local user account with the OAuth token
         oauth.user = user
         # Save and commit our database models
         db.session.add_all([user, oauth])
         db.session.commit()
-        # Log in the new local user account
-        login_user(user)
-        flash("Successfully signed in with GitHub.")
+    
+    # Log in the new local user account
+    login_user(oauth.user)
+    flash("Successfully signed in with GitHub.")
 
-    # Disable Flask-Dance's default behavior for saving the OAuth token
-    return False
+    return False # Disable Flask-Dance's default behavior for saving the OAuth token
 
 # notify on OAuth provider error
 @oauth_error.connect_via(auth_blueprint)
 def github_error(blueprint, error, error_description=None, error_uri=None):
-    msg = (
-        "OAuth error from {name}! "
-        "error={error} description={description} uri={uri}"
-    ).format(
-        name=blueprint.name,
-        error=error,
-        description=error_description,
-        uri=error_uri,
-    )
-    flash(msg, category="error")
+    msg = f"OAuth error from {blueprint.name}! error={error} description={error_description} uri={error_uri}"
 
+    flash(msg, category="error")
