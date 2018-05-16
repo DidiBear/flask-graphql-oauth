@@ -1,10 +1,10 @@
 import os
 
 DEBUG       = os.environ.get('DEBUG',       True)
-HOSTNAME    = os.environ.get('HOSTNAME',    '0.0.0.0')
+HOSTNAME    = os.environ.get('HOSTNAME',    '127.0.0.1')
 PORT        = os.environ.get('PORT',        5000)
 
-# SERVER_NAME = f"{HOSTNAME}:{PORT}"
+SERVER_NAME = f"{HOSTNAME}:{PORT}"
 
 SECRET_KEY  = 'itsatrap'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
