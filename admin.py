@@ -26,7 +26,7 @@ class NeedAdminRoleModelView(NeedAdminRole, ModelView):
 admin = Admin(app, index_view=NeedAdminRoleIndexView(), template_mode='bootstrap3')
 
 import model
-app_models = dict(inspect.getmembers(model, inspect.isclass)).values()
+models = dict(inspect.getmembers(model, inspect.isclass)).values()
 
-for model in [AdminUser, User, OAuth] + list(app_models):
+for model in [AdminUser, User, OAuth] + list(models):
     admin.add_view(NeedAdminRoleModelView(model, db.session))

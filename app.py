@@ -15,10 +15,12 @@ from auth import *
 from api import *
 
 def main():
-    import sys
-    if "--setup" in sys.argv:
+    import sys, os
+    if "--reset" in sys.argv:
+        os.remove("./database.db")
         with app.app_context():
             db.create_all()
+            db.session.add(AdminUser(user_id=1))
             db.session.commit()
             print("Database tables created")
     else:
