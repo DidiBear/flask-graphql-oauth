@@ -1,8 +1,8 @@
-flask
-flask-sqlalchemy
-flask-login
-flask-admin
-flask-dance
-flask-graphql
-graphene-sqlalchemy
-sqlalchemy-utils
+Flask>=0.12
+Flask-Admin>=1.5.1
+Flask-Dance>=0.14.0
+Flask-GraphQL>=1.4.1
+Flask-Login>=0.4.1
+Flask-SQLAlchemy>=2.3.2
+graphene-sqlalchemy>=2.0.0
+SQLAlchemy-Utils>=0.33.3
