@@ -1,5 +1,7 @@
 # Flask-GraphQL demo
 
+[![Build Status](https://travis-ci.org/DidiBear/flask-graphql-oauth.svg?branch=master)](https://travis-ci.org/DidiBear/flask-graphql-oauth)
+
 A simple web application with Flask, Graphql and OAuth.
 
 
