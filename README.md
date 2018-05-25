@@ -1,4 +1,4 @@
-# Flask-GraphQL demo
+# Flask-GraphQL-OAuth
 
 [![Build Status](https://travis-ci.org/DidiBear/flask-graphql-oauth.svg?branch=master)](https://travis-ci.org/DidiBear/flask-graphql-oauth)
 
@@ -14,12 +14,6 @@ A simple web application with Flask, Graphql and OAuth.
 2. `pip install -r requirements.txt`
 
 3. `python app.py`
-
-### or... run using docker
-
-`docker-compose build`
-
-`docker-compose up`
 
 Once the application is running, navigate to the application at `http://localhost:8080`
 

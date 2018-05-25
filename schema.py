@@ -5,47 +5,47 @@ from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 
 from model import Store as StoreModel, Product as ProductModel, Element as ElementModel, Capacity as CapacityModel
 
-class Element(SQLAlchemyObjectType, interfaces=[relay.Node]):
+# interfaces=[relay.Node]
+class Element(SQLAlchemyObjectType):
     class Meta:
         model = ElementModel
 
-class Product(SQLAlchemyObjectType, interfaces=[relay.Node]):
+class Product(SQLAlchemyObjectType):
     class Meta:
         model = ProductModel
 
-class Store(SQLAlchemyObjectType, interfaces=[relay.Node]):
+class Store(SQLAlchemyObjectType):
     class Meta:
         model = StoreModel
 
-class Capacity(SQLAlchemyObjectType, interfaces=[relay.Node]):
+class Capacity(SQLAlchemyObjectType):
     class Meta:
         model = CapacityModel
 
-    def resolve_type(self, info):
-        return self.type.value
-
 class Query(graphene.ObjectType):
-    stores = SQLAlchemyConnectionField(Store)
-    products = SQLAlchemyConnectionField(Product)
-    # store = graphene.Field(Store)
+    # stores = SQLAlchemyConnectionField(Store)
+    # products = SQLAlchemyConnectionField(Product)
+    stores = graphene.List(Store)
+    products = graphene.List(Product)
 
-    # def resolve_stores(self, info):
-    #     # print(dir(info))
-    #     return StoreModel.query.all()
+    def resolve_stores(self, info):
+        return StoreModel.query.all()
 
-    # def resolve_products(self, info):
-    #     return ProductModel.query.all()
+    def resolve_products(self, info):
+        return ProductModel.query.all()
 
     # node = relay.Node.Field()
     # all_stores = SQLAlchemyConnectionField(Store)
     # all_products = SQLAlchemyConnectionField(Product)
 
+# class CreateProduct(SQLAlchemyMutation):
+#     class Input:
+#         model = ProductModel
+#         field = Product
 
-# class Query(graphene.ObjectType):
-#     store = graphene.List(graphene.String)
 
-#     def resolve_hello(self, info):
-#         print(info)
-#         return ['Hello ca va', "mdr"]
+# class Mutation(graphene.ObjectType):
+#     create_product = CreateProduct.Field()
+
 
 schema = graphene.Schema(query=Query, types=[Store, Product, Element, Capacity]) 
