@@ -15,12 +15,12 @@ from flask_login import (
 from app import app, db, login_manager
 
 auth_github_blueprint = make_github_blueprint(
-    client_id="f75638c39c89011654bc",
-    client_secret="cb9b1536546bc490c8c47f3ea3f779687815ac14",)
+    client_id=os.environ['GITHUB_CLIENT_ID'],
+    client_secret=os.environ['GITHUB_CLIENT_SECRET'])
 
 auth_google_blueprint = make_google_blueprint(
-    client_id="976500073047-ut7hra9br3ieu2ah1pu5er499s09j42i.apps.googleusercontent.com",
-    client_secret="ZddX-0tLEGczrn45gwAYaOMc",
+    client_id=os.environ['GOOGLE_CLIENT_ID'],
+    client_secret=os.environ['GOOGLE_CLIENT_SECRET'],
     scope=["profile", "email"])
 
 class User(db.Model, UserMixin):
